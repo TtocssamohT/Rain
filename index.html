@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThomASScott • Animated Rain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background-color: black; /* Set background color to black */
+    }
+
+    canvas {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    #twitterLink {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        font-family: 'Pixelify Sans', sans-serif;
+        font-size: 20px;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+    <canvas id="pixelCanvas"></canvas>
+    <a id="twitterLink" href="https://twitter.com/Thomasscott33" target="_blank">ThomASScott • Twitter</a>
+
+    <script>
+        // Create canvas and context
+        let canvas = document.getElementById('pixelCanvas');
+        let ctx = canvas.getContext('2d');
+
+        // Set canvas size to match viewport dimensions
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Define array to store pixel positions
+        let pixels = [];
+
+        // Create pixels with random initial positions, colors, and movement directions
+        for (let i = 0; i < 10000; i++) {
+            let initialX = Math.random() * canvas.width;
+            let initialY = Math.random() * canvas.height;
+            let direction = Math.random() < 0.3 ? 'diagonal' : 'vertical'; // Randomly select movement direction
+            let speed = (Math.random() * 3 + 1) / 2; // Random speed between 0.5 and 2 pixels per frame
+            let color = '#' + Math.floor(Math.random() * 16777215).toString(16); // Random color
+
+            pixels.push({
+                initialX: initialX,
+                initialY: initialY,
+                x: initialX,
+                y: initialY,
+                speed: speed,
+                color: color,
+                direction: direction,
+                attracted: Math.random() < 0.3 // Randomly decide if pixel is attracted to cursor
+            });
+        }
+
+        // Define animation function
+        function animate() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move and draw each pixel
+            pixels.forEach(pixel => {
+                // Move pixel based on direction
+                if (pixel.direction === 'vertical') {
+                    pixel.y += pixel.speed;
+                } else if (pixel.direction === 'diagonal') {
+                    pixel.x += pixel.speed * 0.7; // Adjust the diagonal speed to make it smoother
+                    pixel.y += pixel.speed;
+                }
+
+                // Draw pixel with random color
+                ctx.fillStyle = pixel.color;
+                ctx.fillRect(pixel.x, pixel.y, 2, 2); // Adjust size to simulate light rain
+
+                // Reset pixel if it reaches bottom of canvas
+                if (pixel.y > canvas.height) {
+                    pixel.x = pixel.initialX;
+                    pixel.y = Math.random() * canvas.height; // Reset y-coordinate to a random value within canvas height
+                }
+            });
+
+            // Request next frame of animation
+            requestAnimationFrame(animate);
+        }
+
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
+s
