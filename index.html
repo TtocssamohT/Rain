@@ -84,6 +84,13 @@
             });
         }
 
+        // Function to change the direction of pixels
+        function changeDirection() {
+            pixels.forEach(pixel => {
+                pixel.speed *= -1; // Reverse the direction of each pixel
+            });
+        }
+
         // Define animation function
         function animate() {
             // Clear canvas
@@ -115,12 +122,7 @@
         setInterval(createRaindrop, spawnInterval);
 
         // Add event listener to change direction button
-        document.getElementById('changeDirectionButton').addEventListener('click', function() {
-            // Change the direction of each pixel randomly
-            pixels.forEach(pixel => {
-                pixel.direction = Math.random() < 0.5 ? 'vertical' : 'diagonal';
-            });
-        });
+        document.getElementById('changeDirectionButton').addEventListener('click', changeDirection);
     </script>
 </body>
 </html>
