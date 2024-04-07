@@ -32,11 +32,26 @@
         color: white;
         text-decoration: none;
     }
+
+    #changeDirectionButton {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-family: 'Pixelify Sans', sans-serif;
+        font-size: 20px;
+        background-color: #d04421; /* Orange background color */
+        color: black;
+        border: 2px solid black; /* 2-pixel solid black outline */
+        border-radius: 10px; /* Rounded corners */
+        padding: 10px 20px;
+        cursor: pointer;
+    }
 </style>
 </head>
 <body>
     <canvas id="pixelCanvas"></canvas>
     <a id="twitterLink" href="https://twitter.com/Thomasscott33" target="_blank">ThomASScott • Twitter</a>
+    <button id="changeDirectionButton">Change Direction</button>
 
     <script>
         // Create canvas and context
@@ -50,23 +65,22 @@
         // Define array to store pixel positions
         let pixels = [];
 
-        // Create pixels with random initial positions, colors, and movement directions
-        for (let i = 0; i < 10000; i++) {
+        // Constants
+        const gravity = 0.1; // Gravity value to simulate piling up effect
+        const spawnInterval = 5; // Milliseconds between each spawn
+
+        // Function to create a new raindrop
+        function createRaindrop() {
             let initialX = Math.random() * canvas.width;
-            let initialY = Math.random() * canvas.height;
-            let direction = Math.random() < 0.3 ? 'diagonal' : 'vertical'; // Randomly select movement direction
+            let initialY = -5; // Spawn raindrops just above the canvas
             let speed = (Math.random() * 3 + 1) / 2; // Random speed between 0.5 and 2 pixels per frame
-            let color = '#' + Math.floor(Math.random() * 16777215).toString(16); // Random color
+            let color = Math.random() < 0.5 ? 'white' : '#d04421'; // Randomly choose between white and red
 
             pixels.push({
-                initialX: initialX,
-                initialY: initialY,
                 x: initialX,
                 y: initialY,
                 speed: speed,
                 color: color,
-                direction: direction,
-                attracted: Math.random() < 0.3 // Randomly decide if pixel is attracted to cursor
             });
         }
 
@@ -76,23 +90,17 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Move and draw each pixel
-            pixels.forEach(pixel => {
-                // Move pixel based on direction
-                if (pixel.direction === 'vertical') {
-                    pixel.y += pixel.speed;
-                } else if (pixel.direction === 'diagonal') {
-                    pixel.x += pixel.speed * 0.7; // Adjust the diagonal speed to make it smoother
-                    pixel.y += pixel.speed;
-                }
+            pixels.forEach((pixel, index) => {
+                // Move pixel downward
+                pixel.y += pixel.speed;
 
                 // Draw pixel with random color
                 ctx.fillStyle = pixel.color;
                 ctx.fillRect(pixel.x, pixel.y, 2, 2); // Adjust size to simulate light rain
 
-                // Reset pixel if it reaches bottom of canvas
+                // Remove raindrops that have fallen off the screen
                 if (pixel.y > canvas.height) {
-                    pixel.x = pixel.initialX;
-                    pixel.y = Math.random() * canvas.height; // Reset y-coordinate to a random value within canvas height
+                    pixels.splice(index, 1);
                 }
             });
 
@@ -102,6 +110,17 @@
 
         // Start animation
         animate();
+
+        // Set interval to spawn new raindrops
+        setInterval(createRaindrop, spawnInterval);
+
+        // Add event listener to change direction button
+        document.getElementById('changeDirectionButton').addEventListener('click', function() {
+            // Change the direction of each pixel randomly
+            pixels.forEach(pixel => {
+                pixel.direction = Math.random() < 0.5 ? 'vertical' : 'diagonal';
+            });
+        });
     </script>
 </body>
 </html>
